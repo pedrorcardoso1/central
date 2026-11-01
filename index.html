@@ -53,10 +53,22 @@
     var pronto = false;
     try { pronto = localStorage.getItem('central-pronto') === '1'; } catch (e) {}
 
+    /** Altura da barra de status (relógio/bateria). Se o iPhone não informar, usa uma altura segura no modo ícone. */
+    function alturaDoTopo() {
+      var sonda = document.createElement('div');
+      sonda.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:env(safe-area-inset-top);visibility:hidden';
+      document.body.appendChild(sonda);
+      var h = sonda.offsetHeight; sonda.remove();
+      if (!h && window.navigator.standalone) h = screen.height >= 852 ? 54 : screen.height >= 812 ? 47 : 20;
+      return h;
+    }
+
     function abrirApp() {
       try { localStorage.setItem('central-pronto', '1'); } catch (e) {}
       document.getElementById('primeira').hidden = true;
       var quadro = document.createElement('iframe');
+      var topo = alturaDoTopo();
+      quadro.style.top = topo + 'px'; quadro.style.height = 'calc(100% - ' + topo + 'px)';
       quadro.src = APP; quadro.title = 'Central'; quadro.allow = 'microphone; clipboard-write';
       document.body.appendChild(quadro);
       // Por alguns segundos, um atalho para entrar de novo (caso o login tenha expirado e o app não abra)
