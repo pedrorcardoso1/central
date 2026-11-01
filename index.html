@@ -3,7 +3,9 @@
 <head>
   <meta charset="utf-8">
   <!-- Página de entrada do Central: abre o app (Google Apps Script) em tela cheia, com o topo escuro.
-       Não tem nenhum dado: o app continua exigindo o login da conta Google do dono. -->
+       Não tem nenhum dado: o app continua exigindo o login da conta Google do dono.
+       No iPhone, o ícone da tela de início tem login separado do Safari: na primeira vez, é preciso
+       entrar no Google por aqui (botão "Entrar com o Google"), fora do quadro. -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
@@ -16,18 +18,55 @@
   <link rel="manifest" href="manifest.json">
   <title>Central</title>
   <style>
-    html, body { margin: 0; height: 100%; background: #0D1316; overflow: hidden; }
-    .carregando { position: fixed; inset: 0; display: grid; place-items: center; color: #A9B7BB;
-      font: 15px -apple-system, 'Segoe UI', Roboto, sans-serif; text-align: center; }
-    .carregando img { width: 96px; height: 96px; border-radius: 24px; display: block; margin: 0 auto 12px; }
-    .carregando a { color: #7CC48F; }
-    iframe { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; background: transparent; }
+    html, body { margin: 0; height: 100%; background: #0D1316; overflow: hidden; color: #EEF3F4;
+      font: 16px -apple-system, 'Segoe UI', Roboto, sans-serif; }
+    .tela { position: fixed; inset: 0; display: grid; place-items: center; text-align: center; padding: 24px; }
+    .tela img { width: 104px; height: 104px; border-radius: 26px; display: block; margin: 0 auto 16px; }
+    .tela h1 { font-size: 22px; margin: 0 0 8px; }
+    .tela p { color: #A9B7BB; font-size: 15px; line-height: 1.45; max-width: 320px; margin: 0 auto 18px; }
+    .botao { display: block; width: 260px; margin: 10px auto 0; padding: 14px; border-radius: 99px; border: 0;
+      font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; }
+    .principal { background: #7CC48F; color: #0D1316; }
+    .secundario { background: #1F2B30; color: #EEF3F4; }
+    iframe { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; background: #0D1316; }
+    .ajuda { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(110px + env(safe-area-inset-bottom));
+      background: #1F2B30; color: #EEF3F4; border: 0; border-radius: 99px; padding: 10px 16px; font: inherit; font-size: 13px;
+      box-shadow: 0 6px 18px rgba(0,0,0,.4); transition: opacity .6s; z-index: 2; }
   </style>
 </head>
 <body>
-  <div class="carregando"><div><img src="icone.png" alt="">Abrindo o Central…<br><br>
-    <small>Não abriu? <a href="https://script.google.com/macros/s/AKfycbx-CJt6lyoFHZ7wmLi9oPGZXzOCnzE1AfYO5Cd8EkfB-IwFqrnzjSMK9wMwfjnd6jIN/exec" target="_top">Abrir direto</a></small></div></div>
-  <iframe src="https://script.google.com/macros/s/AKfycbx-CJt6lyoFHZ7wmLi9oPGZXzOCnzE1AfYO5Cd8EkfB-IwFqrnzjSMK9wMwfjnd6jIN/exec"
-    title="Central" allow="microphone; clipboard-write" referrerpolicy="no-referrer-when-downgrade"></iframe>
+  <div class="tela" id="primeira" hidden>
+    <div>
+      <img src="icone.png" alt="">
+      <h1>Primeira vez por aqui</h1>
+      <p>O ícone da tela de início tem login separado do Safari. Entre na sua conta Google uma vez; depois volte e toque em "Abrir o Central".</p>
+      <a class="botao principal" id="entrar" href="#">1. Entrar com o Google</a>
+      <button class="botao secundario" id="abrir">2. Abrir o Central</button>
+    </div>
+  </div>
+  <script>
+    var APP = 'https:\/\/script.google.com/macros/s/AKfycbx-CJt6lyoFHZ7wmLi9oPGZXzOCnzE1AfYO5Cd8EkfB-IwFqrnzjSMK9wMwfjnd6jIN/exec';
+    var LOGIN = 'https:\/\/accounts.google.com/ServiceLogin?continue=' + encodeURIComponent(APP);
+    var pronto = false;
+    try { pronto = localStorage.getItem('central-pronto') === '1'; } catch (e) {}
+
+    function abrirApp() {
+      try { localStorage.setItem('central-pronto', '1'); } catch (e) {}
+      document.getElementById('primeira').hidden = true;
+      var quadro = document.createElement('iframe');
+      quadro.src = APP; quadro.title = 'Central'; quadro.allow = 'microphone; clipboard-write';
+      document.body.appendChild(quadro);
+      // Por alguns segundos, um atalho para entrar de novo (caso o login tenha expirado e o app não abra)
+      var ajuda = document.createElement('button');
+      ajuda.className = 'ajuda'; ajuda.textContent = 'Não abriu? Entrar com o Google';
+      ajuda.onclick = function () { location.href = LOGIN; };
+      document.body.appendChild(ajuda);
+      setTimeout(function () { ajuda.style.opacity = 0; setTimeout(function () { ajuda.remove(); }, 700); }, 7000);
+    }
+
+    document.getElementById('entrar').href = LOGIN;
+    document.getElementById('abrir').onclick = abrirApp;
+    if (pronto) abrirApp(); else document.getElementById('primeira').hidden = false;
+  </script>
 </body>
 </html>
