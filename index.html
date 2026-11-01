@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <!-- Página de entrada do Central: abre o app (Google Apps Script) em tela cheia, com o topo escuro.
+       Não tem nenhum dado: o app continua exigindo o login da conta Google do dono. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Central">
+  <meta name="theme-color" content="#0D1316">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="apple-touch-icon" href="icone.png">
+  <link rel="icon" href="icone.png">
+  <link rel="manifest" href="manifest.json">
+  <title>Central</title>
+  <style>
+    html, body { margin: 0; height: 100%; background: #0D1316; overflow: hidden; }
+    .carregando { position: fixed; inset: 0; display: grid; place-items: center; color: #A9B7BB;
+      font: 15px -apple-system, 'Segoe UI', Roboto, sans-serif; text-align: center; }
+    .carregando img { width: 96px; height: 96px; border-radius: 24px; display: block; margin: 0 auto 12px; }
+    .carregando a { color: #7CC48F; }
+    iframe { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; background: transparent; }
+  </style>
+</head>
+<body>
+  <div class="carregando"><div><img src="icone.png" alt="">Abrindo o Central…<br><br>
+    <small>Não abriu? <a href="https://script.google.com/macros/s/AKfycbx-CJt6lyoFHZ7wmLi9oPGZXzOCnzE1AfYO5Cd8EkfB-IwFqrnzjSMK9wMwfjnd6jIN/exec" target="_top">Abrir direto</a></small></div></div>
+  <iframe src="https://script.google.com/macros/s/AKfycbx-CJt6lyoFHZ7wmLi9oPGZXzOCnzE1AfYO5Cd8EkfB-IwFqrnzjSMK9wMwfjnd6jIN/exec"
+    title="Central" allow="microphone; clipboard-write" referrerpolicy="no-referrer-when-downgrade"></iframe>
+</body>
+</html>
